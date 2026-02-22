@@ -11,7 +11,34 @@ export type ADNodeKind =
   | "RootCA"
   | "EnterpriseCA"
   | "NTAuthStore"
-  | "CertTemplate";
+  | "CertTemplate"
+  | "IssuancePolicy"
+  | "Base";
+
+// Explore Panel types
+export type ExploreTab = "search" | "pathfinder" | "cypher";
+
+export interface SelectedNode {
+  objectId: string;
+  label: string;
+  kind: ADNodeKind;
+}
+
+export interface PrebuiltQuery {
+  id: string;
+  name: string;
+  description: string;
+  query: string;
+  category: string;
+  platform: "ad" | "azure" | "cross";
+}
+
+export interface QueryCategory {
+  id: string;
+  name: string;
+  platform: "ad" | "azure" | "cross";
+  queries: PrebuiltQuery[];
+}
 
 export interface ADNodeData {
   [key: string]: unknown;
@@ -86,6 +113,13 @@ export interface RemediationItem {
   description: string;
   recommendation: string;
   affectedObjects?: string[];
+  // Enriched fields from VISION 2.5.4
+  blastRadius?: number;
+  pathsEliminated?: number;
+  totalDAPaths?: number;
+  mitreTechnique?: string;
+  mitreId?: string;
+  verificationQuery?: string;
 }
 
 export interface ContextChip {

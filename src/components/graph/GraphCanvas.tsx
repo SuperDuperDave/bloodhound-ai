@@ -1,13 +1,15 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
   ReactFlow,
+  ReactFlowProvider,
   Background,
   Controls,
   MiniMap,
   useNodesState,
   useEdgesState,
+  useReactFlow,
   type NodeTypes,
   type EdgeTypes,
   type Node,
@@ -29,9 +31,10 @@ const edgeTypes: EdgeTypes = {
   attackEdge: AttackEdge,
 };
 
-export function GraphCanvas() {
-  const { nodes: storeNodes, edges: storeEdges, selectNode } = useGraphStore();
+function GraphCanvasInner() {
+  const { nodes: storeNodes, edges: storeEdges, selectNode, fitViewTrigger } = useGraphStore();
   const { addContextChip } = useChatStore();
+  const { fitView } = useReactFlow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState(storeNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(storeEdges);
@@ -41,6 +44,13 @@ export function GraphCanvas() {
     setNodes(storeNodes);
     setEdges(storeEdges);
   }, [storeNodes, storeEdges, setNodes, setEdges]);
+
+  // Respond to fitView requests from explore panel
+  useEffect(() => {
+    if (fitViewTrigger > 0) {
+      setTimeout(() => fitView({ padding: 0.2, duration: 400 }), 100);
+    }
+  }, [fitViewTrigger, fitView]);
 
   const onNodeClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {
@@ -91,5 +101,13 @@ export function GraphCanvas() {
         />
       </ReactFlow>
     </div>
+  );
+}
+
+export function GraphCanvas() {
+  return (
+    <ReactFlowProvider>
+      <GraphCanvasInner />
+    </ReactFlowProvider>
   );
 }

@@ -5,6 +5,7 @@ import { GraphCanvas } from "@/components/graph/GraphCanvas";
 import { ChatPanel } from "@/components/chat/ChatPanel";
 import { EnvironmentDashboard } from "@/components/dashboard/EnvironmentDashboard";
 import { RemediationPanel } from "@/components/remediation/RemediationPanel";
+import { ExplorePanel } from "@/components/explore/ExplorePanel";
 import { useGraphStore } from "@/lib/store/graph-store";
 import { useEnvironmentStore } from "@/lib/store/environment-store";
 import type { Node, Edge } from "@xyflow/react";
@@ -78,7 +79,9 @@ export default function Home() {
           {/* Graph Canvas */}
           <div className="flex-1 min-h-0 relative">
             <GraphCanvas />
-            {/* Floating Dashboard */}
+            {/* Floating Explore Panel (top-left) */}
+            <ExplorePanel />
+            {/* Floating Dashboard (bottom-left) */}
             <div className="absolute bottom-3 left-3 w-[380px] max-h-[280px] bg-zinc-900/95 backdrop-blur-sm border border-zinc-700/50 rounded-lg overflow-hidden shadow-2xl">
               <EnvironmentDashboard />
             </div>

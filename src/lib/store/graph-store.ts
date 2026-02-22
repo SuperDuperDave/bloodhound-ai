@@ -8,6 +8,7 @@ interface GraphState {
   highlightedNodeIds: Set<string>;
   highlightedEdgeIds: Set<string>;
   selectedNodeId: string | null;
+  fitViewTrigger: number;
 
   setGraph: (nodes: Node<ADNodeData>[], edges: Edge<ADEdgeData>[]) => void;
   addGraph: (nodes: Node<ADNodeData>[], edges: Edge<ADEdgeData>[]) => void;
@@ -15,6 +16,7 @@ interface GraphState {
   highlightNodes: (nodeIds: string[]) => void;
   highlightEdges: (edgeIds: string[]) => void;
   clearHighlights: () => void;
+  requestFitView: () => void;
   updateNodes: (updater: (nodes: Node<ADNodeData>[]) => Node<ADNodeData>[]) => void;
   updateEdges: (updater: (edges: Edge<ADEdgeData>[]) => Edge<ADEdgeData>[]) => void;
 }
@@ -25,6 +27,7 @@ export const useGraphStore = create<GraphState>((set) => ({
   highlightedNodeIds: new Set(),
   highlightedEdgeIds: new Set(),
   selectedNodeId: null,
+  fitViewTrigger: 0,
 
   setGraph: (nodes, edges) =>
     set({ nodes, edges, highlightedNodeIds: new Set(), highlightedEdgeIds: new Set() }),
@@ -53,6 +56,9 @@ export const useGraphStore = create<GraphState>((set) => ({
 
   clearHighlights: () =>
     set({ highlightedNodeIds: new Set(), highlightedEdgeIds: new Set() }),
+
+  requestFitView: () =>
+    set((state) => ({ fitViewTrigger: state.fitViewTrigger + 1 })),
 
   updateNodes: (updater) =>
     set((state) => ({ nodes: updater(state.nodes) })),

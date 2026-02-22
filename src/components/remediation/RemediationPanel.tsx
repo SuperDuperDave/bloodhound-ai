@@ -25,7 +25,7 @@ export function RemediationPanel() {
     <div className="border-t border-zinc-800 bg-zinc-900/80">
       <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-sm">🛡️</span>
+          <span className="text-sm">&#x1f6e1;&#xfe0f;</span>
           <h3 className="text-xs font-bold text-zinc-200 uppercase tracking-wider">
             Remediation Plan
           </h3>
@@ -34,7 +34,7 @@ export function RemediationPanel() {
           </span>
         </div>
       </div>
-      <div className="max-h-[200px] overflow-y-auto p-2 space-y-2">
+      <div className="max-h-[280px] overflow-y-auto p-2 space-y-2">
         {remediationItems.map((item) => (
           <div
             key={item.id}
@@ -55,16 +55,51 @@ export function RemediationPanel() {
                 onClick={() => removeRemediationItem(item.id)}
                 className="text-zinc-500 hover:text-zinc-300 text-xs flex-shrink-0"
               >
-                ×
+                x
               </button>
             </div>
+
             <p className="text-[11px] mt-1.5 opacity-80 leading-relaxed">
               {item.description}
             </p>
+
+            {/* Quantitative impact metrics */}
+            {(item.blastRadius || item.pathsEliminated) && (
+              <div className="mt-1.5 flex flex-wrap gap-2">
+                {item.pathsEliminated != null && item.totalDAPaths != null && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/30 font-mono">
+                    {item.pathsEliminated}/{item.totalDAPaths} paths eliminated ({Math.round((item.pathsEliminated / item.totalDAPaths) * 100)}%)
+                  </span>
+                )}
+                {item.blastRadius != null && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/30 font-mono">
+                    Blast radius: {item.blastRadius}
+                  </span>
+                )}
+              </div>
+            )}
+
             <div className="mt-1.5 text-[11px] opacity-90">
               <span className="font-semibold">Fix: </span>
               {item.recommendation}
             </div>
+
+            {/* MITRE ATT&CK mapping */}
+            {item.mitreId && (
+              <div className="mt-1 text-[10px] opacity-70">
+                <span className="font-semibold">MITRE: </span>
+                {item.mitreId}{item.mitreTechnique ? ` — ${item.mitreTechnique}` : ""}
+              </div>
+            )}
+
+            {/* Verification query */}
+            {item.verificationQuery && (
+              <div className="mt-1 text-[10px] opacity-70">
+                <span className="font-semibold">Verify: </span>
+                &quot;{item.verificationQuery}&quot;
+              </div>
+            )}
+
             {item.affectedObjects && item.affectedObjects.length > 0 && (
               <div className="mt-1 flex flex-wrap gap-1">
                 {item.affectedObjects.map((obj) => (
