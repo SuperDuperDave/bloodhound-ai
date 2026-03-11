@@ -59,10 +59,10 @@ function AttackEdgeComponent({
         <EdgeLabelRenderer>
           <div
             className={cn(
-              "absolute text-[9px] font-mono px-1.5 py-0.5 rounded pointer-events-none",
+              "absolute text-[9px] font-mono px-1.5 py-0.5 rounded pointer-events-auto cursor-pointer hover:ring-1 hover:ring-cyan-500/50 transition-all",
               isHighlighted
                 ? "bg-red-500/90 text-white font-bold"
-                : "bg-zinc-800/90 text-zinc-400"
+                : "bg-zinc-800/90 text-zinc-400 hover:bg-zinc-700/90 hover:text-zinc-200"
             )}
             style={{
               transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,

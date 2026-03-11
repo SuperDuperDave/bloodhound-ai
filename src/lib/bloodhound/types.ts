@@ -57,3 +57,21 @@ export interface BHNodeEntityResponse {
     props: Record<string, unknown>;
   };
 }
+
+export interface BHEntityDetailResponse {
+  data: {
+    kind: string;
+    props: Record<string, unknown>;
+    counts?: Record<string, number>;
+  };
+}
+
+export interface BHRelatedResponse {
+  count: number;
+  data: {
+    objectId: string;
+    label: string;
+    kind: string;
+    properties?: Record<string, unknown>;
+  }[];
+}

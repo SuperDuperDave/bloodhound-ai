@@ -127,3 +127,35 @@ export interface ContextChip {
   label: string;
   kind: ADNodeKind;
 }
+
+// Info Panel types
+export interface EntityInfo {
+  objectId: string;
+  kind: ADNodeKind;
+  label: string;
+  isTierZero: boolean;
+  isOwned?: boolean;
+  properties: Record<string, unknown>;
+  counts?: Record<string, number>;
+}
+
+export interface SelectedEdge {
+  sourceId: string;
+  targetId: string;
+  kind: string;
+  sourceLabel: string;
+  targetLabel: string;
+  properties?: Record<string, unknown>;
+}
+
+export interface RelatedEntity {
+  objectId: string;
+  label: string;
+  kind: ADNodeKind;
+}
+
+export interface RelationshipSectionDef {
+  key: string;
+  label: string;
+  endpoint: string;
+}

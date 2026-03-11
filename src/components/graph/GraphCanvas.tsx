@@ -21,7 +21,8 @@ import { ADNode } from "./ADNode";
 import { AttackEdge } from "./AttackEdge";
 import { useGraphStore } from "@/lib/store/graph-store";
 import { useChatStore } from "@/lib/store/chat-store";
-import type { ADNodeData } from "@/types";
+import { useInfoPanelStore } from "@/lib/store/info-panel-store";
+import type { ADNodeData, ADEdgeData } from "@/types";
 
 const nodeTypes: NodeTypes = {
   adNode: ADNode,
@@ -34,6 +35,7 @@ const edgeTypes: EdgeTypes = {
 function GraphCanvasInner() {
   const { nodes: storeNodes, edges: storeEdges, selectNode, fitViewTrigger } = useGraphStore();
   const { addContextChip } = useChatStore();
+  const { setSelectedEntity, setSelectedEdge } = useInfoPanelStore();
   const { fitView } = useReactFlow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState(storeNodes);
@@ -61,8 +63,32 @@ function GraphCanvasInner() {
         label: data.label,
         kind: data.kind,
       });
+      setSelectedEntity({
+        objectId: data.objectId,
+        kind: data.kind,
+        label: data.label,
+      });
     },
-    [selectNode, addContextChip]
+    [selectNode, addContextChip, setSelectedEntity]
+  );
+
+  const onEdgeClick = useCallback(
+    (_event: React.MouseEvent, edge: { id: string; source: string; target: string; data?: unknown }) => {
+      const edgeData = edge.data as ADEdgeData | undefined;
+      const sourceNode = storeNodes.find((n) => n.id === edge.source);
+      const targetNode = storeNodes.find((n) => n.id === edge.target);
+      const sourceData = sourceNode?.data as ADNodeData | undefined;
+      const targetData = targetNode?.data as ADNodeData | undefined;
+
+      setSelectedEdge({
+        sourceId: sourceData?.objectId ?? edge.source,
+        targetId: targetData?.objectId ?? edge.target,
+        kind: edgeData?.label ?? "Unknown",
+        sourceLabel: sourceData?.label ?? edge.source,
+        targetLabel: targetData?.label ?? edge.target,
+      });
+    },
+    [storeNodes, setSelectedEdge]
   );
 
   const onPaneClick = useCallback(() => {
@@ -77,6 +103,7 @@ function GraphCanvasInner() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
+        onEdgeClick={onEdgeClick}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}

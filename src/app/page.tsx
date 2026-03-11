@@ -6,6 +6,8 @@ import { ChatPanel } from "@/components/chat/ChatPanel";
 import { EnvironmentDashboard } from "@/components/dashboard/EnvironmentDashboard";
 import { RemediationPanel } from "@/components/remediation/RemediationPanel";
 import { ExplorePanel } from "@/components/explore/ExplorePanel";
+import { InfoPanel } from "@/components/info-panel/InfoPanel";
+import { InfoPanelToggle } from "@/components/info-panel/InfoPanelToggle";
 import { useGraphStore } from "@/lib/store/graph-store";
 import { useEnvironmentStore } from "@/lib/store/environment-store";
 import type { Node, Edge } from "@xyflow/react";
@@ -81,6 +83,10 @@ export default function Home() {
             <GraphCanvas />
             {/* Floating Explore Panel (top-left) */}
             <ExplorePanel />
+            {/* Info Panel Toggle (top-right of canvas) */}
+            <InfoPanelToggle />
+            {/* Entity Info Panel (slides in from right) */}
+            <InfoPanel />
             {/* Floating Dashboard (bottom-left) */}
             <div className="absolute bottom-3 left-3 w-[380px] max-h-[280px] bg-zinc-900/95 backdrop-blur-sm border border-zinc-700/50 rounded-lg overflow-hidden shadow-2xl">
               <EnvironmentDashboard />

@@ -4,6 +4,8 @@ import {
   BHCypherResponse,
   BHDomainResponse,
   BHNodeEntityResponse,
+  BHEntityDetailResponse,
+  BHRelatedResponse,
 } from "./types";
 
 const BH_URL = process.env.BH_URL || "http://127.0.0.1:8080";
@@ -134,4 +136,61 @@ export async function getShortestPath(
   // Use Cypher for pathfinding — more reliable than the pathfinding API
   const query = `MATCH p=shortestPath((s)-[*1..]->(e)) WHERE s.objectid = "${startNode}" AND e.objectid = "${endNode}" RETURN p`;
   return runCypher(query);
+}
+
+const KIND_TO_API_PATH: Record<string, string> = {
+  User: "users",
+  Computer: "computers",
+  Group: "groups",
+  Domain: "domains",
+  OU: "ous",
+  GPO: "gpos",
+  Container: "containers",
+  CertTemplate: "cert-templates",
+  EnterpriseCA: "enterprise-cas",
+  RootCA: "root-cas",
+  AIACA: "aiacas",
+  NTAuthStore: "ntauth-stores",
+  IssuancePolicy: "issuance-policies",
+  Base: "base",
+};
+
+function kindToPath(kind: string): string {
+  return KIND_TO_API_PATH[kind] || kind.toLowerCase() + "s";
+}
+
+export async function getEntityDetails(objectId: string, kind?: string) {
+  const encodedId = encodeURIComponent(objectId);
+
+  // Try type-specific endpoint first if kind is known
+  if (kind && kind !== "Base") {
+    try {
+      const apiPath = kindToPath(kind);
+      return await bhFetch<BHEntityDetailResponse>(
+        `/api/v2/${apiPath}/${encodedId}?counts=true`
+      );
+    } catch {
+      // Fallback to base endpoint
+    }
+  }
+
+  // Fallback: base endpoint (no counts support)
+  const base = await bhFetch<BHNodeEntityResponse>(
+    `/api/v2/base/${encodedId}`
+  );
+  return { data: { ...base.data, counts: undefined } } as BHEntityDetailResponse;
+}
+
+export async function getRelatedObjects(
+  objectId: string,
+  kind: string,
+  section: string,
+  skip = 0,
+  limit = 10
+) {
+  const apiPath = kindToPath(kind);
+  const encodedId = encodeURIComponent(objectId);
+  return bhFetch<BHRelatedResponse>(
+    `/api/v2/${apiPath}/${encodedId}/${section}?skip=${skip}&limit=${limit}`
+  );
 }
